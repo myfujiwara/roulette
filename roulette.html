@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="roulette.css">
+    <title>ルーレット</title>
+    <script>
+          var intervalId;
+          var startFlag = false;
+          var stock = [];
+          var swap;
+          var num;
+          var rand;
+           
+// ランダムで1つ光る
+        function updateRoulette(){
+        //   1から16の乱数を取得
+            rand = Math.floor(Math.random() * stock.length);
+            swap = stock[rand];
+            //上記で生成した乱数を元にid名を特定 
+            //  num = document.getElementById('num' + rand);
+            // そのidを用いて要素を取得（また、仮に取得したことがわかるように、その要素の背景色を設定する等も）
+            if(num!==undefined){
+                num.classList.remove('bgcolor')
+console.log(num.style.backgroundColor);
+            }
+            num = document.getElementById('num' + swap); 
+console.log(num.style.backgroundColor); 
+            num.classList.add('bgcolor')
+        }
+       
+    //   スタートボタンでランダム開始、二度押し防止
+        function rouletteStart(){
+            if(startFlag === false){
+                intervalId = setInterval(updateRoulette,50);
+                startFlag = true;
+                // ifとelseを使って
+                document.getElementById('start').disabled = true;
+                document.getElementById('stop').disabled = false;
+            }
+        }
+        function switchStart(){
+            if(start.disabled){
+                start.disabled = false;
+                return false;
+            }else{
+                start.disabled = true;
+                return true;
+            }
+        }
+
+    // ストップボタンで止まる
+        function rouletteStop(){
+                clearInterval(intervalId);
+                startFlag = false;
+                document.getElementById('start').disabled = false;
+                document.getElementById('stop').disabled = true;
+                // ストップした数字色変える
+                num.classList.remove('bgcolor')
+                num.classList.add('stopcolor')
+                // 止まった数字はもう使わない
+                stock.splice(rand,1);
+console.log(stock);
+            if (stock.length === 0){
+                document.getElementById('start').disabled = true;
+                document.getElementById('stop').disabled = true;
+            }
+        }
+
+    // リセットで初期状態
+        function rouletteReset(){
+            clearInterval(intervalId);
+            startFlag = false;
+        // リセット1つずつ消す, stock0にする
+            stock = [];
+            for (var i = 1; i <= 16; i++) {
+                num = document.getElementById('num' + i); 
+                num.classList.remove('stopcolor')
+                num.classList.remove('bgcolor')
+                stock.push(i);
+            }
+            switchStart();
+            document.getElementById('start').disabled = false;
+            document.getElementById('stop').disabled = true;
+        }
+            
+      window.onload = function(){
+        var start = document.getElementById('start');
+        start.addEventListener('click', rouletteStart, false);
+        var stop = document.getElementById('stop');
+        stop.addEventListener('click', rouletteStop, false);
+        var reset =document.getElementById('reset');
+        reset.addEventListener('click', rouletteReset, false);
+      
+        //   マス目の作成
+        var roulette = document.getElementById('roulette');
+        for (var i = 1; i <= 16;i++){
+        // マス目用の要素作成
+        var element_p = document.createElement('p');
+        // マス目の数字設定
+        element_p.innerHTML = i;
+        // マス目のid設定
+        element_p.id = "num" + i;
+        roulette.appendChild(element_p);
+        stock.push(i);
+        }
+console.log(stock);
+        }
+    </script>
+    </head>
+    <body>
+        <div id ="roulette"></div>
+        <button id="start">スタート</button>
+        <button id="stop">ストップ</button>
+        <button id="reset">リセット</button>
+    </body>
+</html>
